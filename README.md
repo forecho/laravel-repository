@@ -1,11 +1,10 @@
-# Very short description of the package
+# Laravel Repository
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/forecho/laravel-repository.svg?style=flat-square)](https://packagist.org/packages/forecho/laravel-repository)
 [![Total Downloads](https://img.shields.io/packagist/dt/forecho/laravel-repository.svg?style=flat-square)](https://packagist.org/packages/forecho/laravel-repository)
 ![GitHub Actions](https://github.com/forecho/laravel-repository/actions/workflows/main.yml/badge.svg)
 
-This is where your description should go. Try and limit it to a paragraph or two, and maybe throw in a mention of what PSRs you support to avoid any confusion with users and contributors.
-
+The Laravel Repository package is meant to be a generic repository implementation for Laravel.
 ## Installation
 
 You can install the package via composer:

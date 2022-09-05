@@ -91,7 +91,6 @@ abstract class Repository implements RepositoryInterface
     {
         $attributes = $this->model->getModel()->getFillable();
         foreach ($params as $name => $value) {
-
             if (! in_array($name, $attributes)) {
                 continue;
             }

@@ -87,6 +87,13 @@ abstract class Repository implements RepositoryInterface
         return $model->delete();
     }
 
+//    public function where($column, $operator = null, $value = null, $boolean = 'and'): Repository|static
+//    {
+//       $this->model->where($column, $operator, $value, $boolean);
+//
+//       return $this;
+//    }
+
     public function search(array $params): static
     {
         $attributes = $this->model->getModel()->getFillable();
@@ -169,6 +176,13 @@ abstract class Repository implements RepositoryInterface
                 $this->model = $c->apply($this->model, $this);
             }
         }
+
+        return $this;
+    }
+
+    public function where($column, $operator = null, $value = null, $boolean = 'and'): static
+    {
+        $this->model->where($column, $operator, $value, $boolean);
 
         return $this;
     }

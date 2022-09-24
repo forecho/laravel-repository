@@ -87,13 +87,6 @@ abstract class Repository implements RepositoryInterface
         return $model->delete();
     }
 
-//    public function where($column, $operator = null, $value = null, $boolean = 'and'): Repository|static
-//    {
-//       $this->model->where($column, $operator, $value, $boolean);
-//
-//       return $this;
-//    }
-
     public function search(array $params): static
     {
         $attributes = $this->model->getModel()->getFillable();
@@ -190,8 +183,10 @@ abstract class Repository implements RepositoryInterface
     public function __call(string $method, array $arguments)
     {
         $this->applyCriteria();
+        $result = call_user_func_array([$this->model, $method], $arguments);
+        $this->model = app($this->modelClass);
 
-        return call_user_func_array([$this->model, $method], $arguments);
+        return $result;
     }
 
     public static function __callStatic(string $name, array $arguments)

@@ -24,6 +24,8 @@ abstract class Repository implements RepositoryInterface
 
     public array $partialMatchAttributes = [];
 
+    public array $booleanAttributes = [];
+
     public bool $skipCriteria = false;
 
     private Collection $criteria;
@@ -95,10 +97,12 @@ abstract class Repository implements RepositoryInterface
                 continue;
             }
             $value = trim($value);
-            if (! $value) {
+            if ($value === '') {
                 continue;
             }
-            if (in_array($name, $this->partialMatchAttributes)) {
+            if (in_array($name, $this->booleanAttributes)) {
+                $this->model->where($name, filter_var($value, FILTER_VALIDATE_BOOLEAN));
+            } elseif (in_array($name, $this->partialMatchAttributes)) {
                 $this->model->where($name, 'like', "%{$value}%");
             } else {
                 $this->addCondition($name, $value);

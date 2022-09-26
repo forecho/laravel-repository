@@ -18,8 +18,14 @@ abstract class Repository implements RepositoryInterface
 
     public string $modelClass;
 
+    /**
+     * @var array eg: ['status' => 'desc', 'id' => 'desc']
+     */
     public array $defaultOrder = [];
 
+    /**
+     * @var array eg: ['type']
+     */
     public array $groupBy = [];
 
     public array $partialMatchAttributes = [];
@@ -27,6 +33,21 @@ abstract class Repository implements RepositoryInterface
     public array $booleanAttributes = [];
 
     public bool $skipCriteria = false;
+
+    /**
+     * @link https://github.com/yiisoft/yii2/blob/56400add978427156673947e3c3d389674c93b56/framework/data/Sort.php#L247
+     *
+     * @var string the name of the parameter that specifies which attributes to be sorted
+     * in which direction. Defaults to 'sort'.
+     *
+     * @see params
+     */
+    public string $sortParam = 'sort';
+
+    /**
+     * @var string the character used to separate different attributes that need to be sorted by.
+     */
+    public string $separator = ',';
 
     private Collection $criteria;
 
@@ -62,15 +83,32 @@ abstract class Repository implements RepositoryInterface
         }
         $this->model = $model->newQuery();
 
-        if ($this->defaultOrder) {
-            $this->model->orderBy(...$this->defaultOrder);
-        }
-
         if ($this->groupBy) {
-            $this->model->groupBy(...$this->groupBy);
+            $this->model->groupBy($this->groupBy);
         }
 
         return $this->model;
+    }
+
+    public function attributeOrders(array $params, array $safeAttributes)
+    {
+        if (isset($params[$this->sortParam]) && is_scalar($params[$this->sortParam])) {
+            $attributes = explode($this->separator, $params[$this->sortParam]);
+            foreach ($attributes as $attribute) {
+                $descending = false;
+                if (strncmp($attribute, '-', 1) === 0) {
+                    $descending = true;
+                    $attribute = substr($attribute, 1);
+                }
+                if (in_array(ltrim($attribute, '-'), $safeAttributes, true)) {
+                    $this->model->orderBy($attribute, $descending ? 'desc' : 'asc');
+                }
+            }
+        } elseif ($this->defaultOrder) {
+            foreach ($this->defaultOrder as $attribute => $direction) {
+                $this->model->orderBy($attribute, $direction);
+            }
+        }
     }
 
     public function update(array $attributes, $id): Model
@@ -96,6 +134,9 @@ abstract class Repository implements RepositoryInterface
             if (! in_array($name, $attributes)) {
                 continue;
             }
+            if ($name === $this->sortParam) {
+                continue;
+            }
             $value = trim($value);
             if ($value === '') {
                 continue;
@@ -108,6 +149,7 @@ abstract class Repository implements RepositoryInterface
                 $this->addCondition($name, $value);
             }
         }
+        $this->attributeOrders($params, $attributes);
 
         return $this;
     }
@@ -132,7 +174,7 @@ abstract class Repository implements RepositoryInterface
                 $this->model->whereIn($name, explode(',', $value));
                 break;
             case preg_match(config('repository.range_condition_reg'), $value, $matches) == 1:
-                // 查询两个值之间的数据
+                // select between
                 if (isset($matches[1]) && isset($matches[2])) {
                     $this->model->whereBetween($name, [$matches[1], $matches[2]]);
                 }

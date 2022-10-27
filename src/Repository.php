@@ -230,7 +230,7 @@ abstract class Repository implements RepositoryInterface
     {
         $this->applyCriteria();
         $result = call_user_func_array([$this->model, $method], $arguments);
-        $this->model = app($this->modelClass);
+        $this->model = app($this->modelClass)->newQuery();
 
         return $result;
     }

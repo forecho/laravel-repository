@@ -127,6 +127,20 @@ abstract class Repository implements RepositoryInterface
         return $model->delete();
     }
 
+    /**
+     * Load relations
+     *
+     * @param array|string $relations
+     *
+     * @return $this
+     */
+    public function with(array|string $relations): static
+    {
+        $this->model = $this->model->with($relations);
+
+        return $this;
+    }
+
     public function search(array $params): static
     {
         $attributes = $this->model->getModel()->getFillable();

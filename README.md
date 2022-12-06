@@ -161,6 +161,12 @@ http://127.0.0.1:8000/api/posts?status=0
 ]
 ```
 
+http://127.0.0.1:8000/api/posts?title=for&status=0
+
+```json
+[]
+```
+
 ### Testing
 
 ```bash

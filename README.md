@@ -55,6 +55,7 @@ namespace App\Http\Controllers;
 
 use App\Repositories\PostRepository;
 use Illuminate\Http\Request;
+use App\Http\Resources\UserResource;
 
 class UserController extends Controller
 {
@@ -70,7 +71,7 @@ class UserController extends Controller
         $posts = $this->repository->search($request->all())->paginate();
         // $posts = $this->repository->with(['user'])->search($request->all())->paginate();
         
-        return view('posts.index', compact('posts'));
+        return response()->json(UserResource::collection($posts);
     }
 }
 ```
@@ -103,6 +104,62 @@ class UserCriteriaCriteria implements CriteriaInterface
         return $model->where('user_id', UserService::getUserId());
     }
 }
+```
+
+Request all data without filter by request:
+
+http://127.0.0.1:8000/api/posts
+
+```json
+[
+    {
+        "id": 1,
+        "title": "title",
+        "content": "content",
+        "status": 0,
+        "created_at": "2021-08-01T07:00:00.000000Z",
+        "updated_at": "2021-08-01T07:00:00.000000Z"
+    },
+    {
+        "id": 2,
+        "title": "for echo",
+        "content": "content",
+        "status": 1,
+        "created_at": "2021-08-01T07:00:00.000000Z",
+        "updated_at": "2021-08-01T07:00:00.000000Z"
+    }
+]
+```
+
+http://127.0.0.1:8000/api/posts?title=for
+
+```json
+[
+    {
+        "id": 2,
+        "title": "for echo",
+        "content": "content",
+        "status": 1,
+        "created_at": "2021-08-01T07:00:00.000000Z",
+        "updated_at": "2021-08-01T07:00:00.000000Z"
+    }
+]
+```
+
+http://127.0.0.1:8000/api/posts?status=0
+
+```json
+[
+    {
+        "id": 1,
+        "title": "title",
+        "content": "content",
+        "status": 0,
+        "created_at": "2021-08-01T07:00:00.000000Z",
+        "updated_at": "2021-08-01T07:00:00.000000Z"
+    }
+]
+```
 
 ### Testing
 

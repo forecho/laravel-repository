@@ -78,7 +78,7 @@ abstract class Repository implements RepositoryInterface
     {
         $model = app($this->modelClass);
 
-        if (! $model instanceof Model) {
+        if (!$model instanceof Model) {
             throw new RepositoryException("Class {$this->modelClass} must be an instance of Illuminate\\Database\\Eloquent\\Model");
         }
         $this->model = $model->newQuery();
@@ -131,7 +131,6 @@ abstract class Repository implements RepositoryInterface
      * Load relations
      *
      * @param array|string $relations
-     *
      * @return $this
      */
     public function with(array|string $relations): static
@@ -145,7 +144,7 @@ abstract class Repository implements RepositoryInterface
     {
         $attributes = $this->model->getModel()->getFillable();
         foreach ($params as $name => $value) {
-            if (! in_array($name, $attributes)) {
+            if (!in_array($name, $attributes)) {
                 continue;
             }
             if ($name === $this->sortParam) {
@@ -202,7 +201,7 @@ abstract class Repository implements RepositoryInterface
     /**
      * Push Criteria for filter the query
      *
-     * @param  string  $criteria
+     * @param string $criteria
      * @return $this
      *
      * @throws RepositoryException
@@ -210,8 +209,8 @@ abstract class Repository implements RepositoryInterface
     public function pushCriteria(string $criteria): static
     {
         $criteria = app($criteria);
-        if (! $criteria instanceof CriteriaInterface) {
-            throw new RepositoryException('Class '.get_class($criteria).' must be an instance of Forecho\\LaravelRepository\\Contracts\\CriteriaInterface');
+        if (!$criteria instanceof CriteriaInterface) {
+            throw new RepositoryException('Class ' . get_class($criteria) . ' must be an instance of Forecho\\LaravelRepository\\Contracts\\CriteriaInterface');
         }
         $this->criteria->push($criteria);
 
